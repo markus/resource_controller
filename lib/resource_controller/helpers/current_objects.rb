@@ -41,6 +41,14 @@ module ResourceController::Helpers::CurrentObjects
       @object
     end
     
+    def current_parents
+      @current_parents ||= parent_objects.map(&:last)
+    end
+    
+    def current_objects
+      @current_object ||= parent? ? current_parents + [object] : object
+    end
+    
     # Used internally to load the member object in to an instance variable @#{model_name} (i.e. @post)
     #
     def load_object

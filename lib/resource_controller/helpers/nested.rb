@@ -23,18 +23,8 @@ module ResourceController::Helpers::Nested
     end
     
     def parent_objects
-      @parent_objects ||= returning [] do |parent_objects|
-        unless parent_types.length == 1
-          parent_types.inject do |last, next_type|
-            parent_objects << [last, last = parent_model_for(last).find(parent_param(last))] if last.is_a? Symbol
-            
-            next_entry     = [next_type, last.send(next_type.to_s.pluralize).find(parent_param(next_type))]
-            parent_objects << next_entry
-            next_entry.last
-          end
-        else
-          parent_objects << [parent_types.last, parent_model_for(parent_types.last).find(parent_param(parent_types.last))] if parent_types.last.is_a? Symbol
-        end
+      @parent_objects ||= parent_types.inject([]) do |parent_objects, type|
+        parent_objects << [type, parent_model_for(type).find_object(parent_param(type), parent_objects.last)]
       end
     end
     
